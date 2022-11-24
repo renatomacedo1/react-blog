@@ -5,6 +5,7 @@ const port = 4000;
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const authRoute = require("./routes/auth");
+const usersRoute = require("./routes/users");
 
 dotenv.config();
 app.use(express.json());
@@ -21,6 +22,7 @@ mongoose
   });
 
 app.use("/api/auth", authRoute);
+app.use("/api/users", usersRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
