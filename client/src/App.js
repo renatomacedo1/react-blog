@@ -14,15 +14,10 @@ function App() {
       <TopBar />
       <Routes>
         <Route exact path="/" element={<Home />} />
-
         <Route path="/post/:postId" element={<Single />} />
-
         <Route path="/write" element={user ? <Home /> : <Write />} />
-
         <Route path="/settings" element={user ? <Home /> : <Settings />} />
-
         <Route path="/login" element={user ? <Home /> : <Login />} />
-
         <Route path="/register" element={user ? <Home /> : <Register />} />
       </Routes>
     </Router>
