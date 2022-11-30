@@ -11,7 +11,7 @@ function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       const res = await axios.get("http://localhost:4000/api/posts");
-      console.log(res);
+      setPosts(res.data);
     };
     fetchPosts();
   }, []);
@@ -19,7 +19,7 @@ function Home() {
     <>
       <Header />
       <div className="home">
-        <Posts />
+        <Posts posts={posts} />
         <Sidebar />
       </div>
     </>

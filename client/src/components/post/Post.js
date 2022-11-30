@@ -1,34 +1,28 @@
 import "./post.css";
 import img1 from "../../assets/postimg.jpeg";
+import { Link } from "react-router-dom";
 
-export default function Post() {
+export default function Post({ post }) {
   return (
     <div className="post">
-      <img className="postImg" src={img1} alt="" />
+      {post.photo && <img className="postImg" src={post.photo} alt="" />}
+
       <div className="postInfo">
         <div className="postCats">
-          <span className="postCat">Music</span>
-          <span className="postCat">Life</span>
+          {post.categories.map((c) => {
+            <span className="postCat">{c.name}</span>;
+          })}
         </div>
-        <span className="postTitle">Lorem ipsum dolor sit amet</span>
+        <Link to={`/post/${post._id}`} className="link">
+          <span className="postTitle">{post.title}</span>
+        </Link>
         <hr />
 
-        <span className="postDate">1 hour ago</span>
+        <span className="postDate">
+          {new Date(post.createdAt).toDateString()}
+        </span>
       </div>
-      <p className="postDesc">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam ut
-        consequatur cumque corrupti aliquid magni porro saepe totam hic quod,
-        enim officia, aperiam sed iusto neque nisi odio non architecto! Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Aliquam ut
-        consequatur cumque corrupti aliquid magni porro saepe totam hic quod,
-        enim officia, aperiam sed iusto neque nisi odio non architecto! Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Aliquam ut
-        consequatur cumque corrupti aliquid magni porro saepe totam hic quod,
-        enim officia, aperiam sed iusto neque nisi odio non architecto! Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Aliquam ut
-        consequatur cumque corrupti aliquid magni porro saepe totam hic quod,
-        enim officia, aperiam sed iusto neque nisi odio non architecto!
-      </p>
+      <p className="postDesc">{post.desc}</p>
     </div>
   );
 }
