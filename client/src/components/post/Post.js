@@ -3,9 +3,10 @@ import img1 from "../../assets/postimg.jpeg";
 import { Link } from "react-router-dom";
 
 export default function Post({ post }) {
+  const PF = "http://localhost:4000/images/"; // PF -> public folder
   return (
     <div className="post">
-      {post.photo && <img className="postImg" src={post.photo} alt="" />}
+      {post.photo && <img className="postImg" src={PF + post.photo} alt="" />}
 
       <div className="postInfo">
         <div className="postCats">

@@ -1,9 +1,15 @@
 import "./topbar.css";
 import foto from "../../assets/eu_nova.png";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Context } from "../../context/Context";
 
 export default function TopBar() {
-  const user = false;
+  const { user, dispatch } = useContext(Context);
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+  };
   return (
     <div className="top">
       <div className="topLeft">
@@ -34,12 +40,19 @@ export default function TopBar() {
               WRITE
             </Link>
           </li>
-          <li className="topListItem">{user && "LOGOUT"}</li>
+          <li className="topListItem" onClick={handleLogout}>
+            {user && "LOGOUT"}
+          </li>
         </ul>
       </div>
       <div className="topRight">
         {user ? (
-          <img className="topImage" src={foto} alt="foto" />
+          // #TODO alterar a foto de perfil
+          <img
+            className="topImage"
+            src={user.profilePicture || foto}
+            alt="foto"
+          />
         ) : (
           <ul className="topList">
             <li className="topListItem">
