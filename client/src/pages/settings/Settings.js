@@ -43,12 +43,14 @@ export default function Settings() {
       const res = await axios.patch("/users/" + user._id, updatedUser);
       window.alert("User updated with success.");
       console.log(res);
+      setFailure(false);
       setSuccess(true);
       dispatch({ type: "UPDATE_SUCCESS", payload: res.data });
 
       //window.location.replace("/post/" + res.data._id);
     } catch (error) {
       // TODO mostrar mensagem de erro ao user
+      setSuccess(false);
       setFailure(true);
       dispatch({ type: "UPDATE_FAILURE" });
 
