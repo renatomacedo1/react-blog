@@ -15,6 +15,7 @@ router.post("/register", async (req, res) => {
     const user = await newUser.save();
     res.status(200).json(user);
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 });
@@ -25,12 +26,14 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
 
     if (!user) {
+      console.log("Wrong credentials 1");
       return res.status(400).json("Wrong credentials");
     }
 
     const validate = await bcrypt.compare(req.body.password, user.password);
 
     if (!validate) {
+      console.log("Wrong credentials 2");
       return res.status(400).json("Wrong credentials");
     }
 
@@ -38,6 +41,7 @@ router.post("/login", async (req, res) => {
 
     return res.status(200).json(others);
   } catch (error) {
+    console.log(error);
     return res.status(500).json("There was a server error");
   }
 });

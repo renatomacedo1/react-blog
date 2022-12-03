@@ -40,7 +40,7 @@ export default function Login() {
           placeholder="Enter your password"
           ref={passwordRef}
         />
-        <button className="loginButton" type="submit" disabled={isFetching}>
+        <button className="loginButton" type="submit">
           Login
         </button>
       </form>
