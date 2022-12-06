@@ -7,8 +7,21 @@ import { Context } from "../../context/Context";
 export default function Write() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [cat, setCat] = useState("");
+  const [cats, setCats] = useState([]);
   const [file, setFile] = useState(null);
   const { user } = useContext(Context);
+
+  const addCats = (e) => {
+    e.preventDefault();
+    setCats((cats) => [...cats, cat]);
+    logger();
+  };
+
+  function logger() {
+    setCat("");
+    console.log(cats);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,6 +58,17 @@ export default function Write() {
       {file && (
         <img className="writeImg" src={URL.createObjectURL(file)} alt="" />
       )}
+      <form onSubmit={addCats}>
+        <input
+          id="catInput"
+          type="text"
+          placeholder={cat || "category"}
+          className="writeInput"
+          onChange={(e) => setCat(e.target.value)}
+        />
+        <button type="submit">add category</button>
+      </form>
+
       <form className="writeForm" onSubmit={handleSubmit}>
         <div className="writeFormGroup">
           <label htmlFor="fileInput">
@@ -64,6 +88,7 @@ export default function Write() {
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
+
         <div className="writeFormGroup">
           <textarea
             placeholder="Tell your story..."
@@ -75,10 +100,17 @@ export default function Write() {
             onChange={(e) => setDesc(e.target.value)}
           ></textarea>
         </div>
+
         <button className="writeSubmit" type="submit">
           Publish
         </button>
       </form>
+      {cats.map((cat, index) => {
+        <li key={index}>
+          {cat}
+          {index}
+        </li>;
+      })}
     </div>
   );
 }
