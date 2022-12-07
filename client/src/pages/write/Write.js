@@ -1,8 +1,9 @@
 import "./write.css";
-import img from "../../assets/s.jpeg";
-import { useContext, useState } from "react";
+//import img from "../../assets/s.jpeg";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Context } from "../../context/Context";
+import Categories from "../../components/categories/Categories";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -12,16 +13,27 @@ export default function Write() {
   const [file, setFile] = useState(null);
   const { user } = useContext(Context);
 
+  let catRef = useRef();
+
+  useEffect(() => {
+    catRef.current?.reset();
+    console.log(cats);
+  }, [cats]);
+
   const addCats = (e) => {
     e.preventDefault();
-    setCats((cats) => [...cats, cat]);
-    logger();
+    if (cat !== "") {
+      setCats((cats) => [...cats, cat]);
+      setCat("");
+    }
   };
 
-  function logger() {
-    setCat("");
-    console.log(cats);
-  }
+  const handleRemoveCat = (name) => {
+    console.log("HandleRemoveCat");
+    // TODO this functions
+    //const newCats = cats.filter(name);
+    //setCats(newCats);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,17 +70,28 @@ export default function Write() {
       {file && (
         <img className="writeImg" src={URL.createObjectURL(file)} alt="" />
       )}
-      <form onSubmit={addCats}>
+      <form ref={catRef} onSubmit={addCats}>
         <input
           id="catInput"
           type="text"
-          placeholder={cat || "category"}
+          placeholder="add category"
           className="writeInput"
           onChange={(e) => setCat(e.target.value)}
         />
         <button type="submit">add category</button>
+        <div>
+          {cats.map((a, index) => {
+            return (
+              <div>
+                <p key={index}>{a}</p>
+                <button key={a} onClick={handleRemoveCat}>
+                  remove
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </form>
-
       <form className="writeForm" onSubmit={handleSubmit}>
         <div className="writeFormGroup">
           <label htmlFor="fileInput">
@@ -105,12 +128,6 @@ export default function Write() {
           Publish
         </button>
       </form>
-      {cats.map((cat, index) => {
-        <li key={index}>
-          {cat}
-          {index}
-        </li>;
-      })}
     </div>
   );
 }
