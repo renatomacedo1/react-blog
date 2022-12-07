@@ -3,7 +3,6 @@ import "./write.css";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Context } from "../../context/Context";
-import Categories from "../../components/categories/Categories";
 
 export default function Write() {
   const [title, setTitle] = useState("");
@@ -23,7 +22,7 @@ export default function Write() {
   const addCats = (e) => {
     e.preventDefault();
     if (cat !== "") {
-      setCats((cats) => [...cats, cat]);
+      setCats((cats) => [...cats, { key: cats.length, name: cat }]);
       setCat("");
     }
   };
@@ -31,8 +30,8 @@ export default function Write() {
   const handleRemoveCat = (name) => {
     console.log("HandleRemoveCat");
     // TODO this functions
-    //const newCats = cats.filter(name);
-    //setCats(newCats);
+    const newCats = cats.filter((item) => item.name !== name);
+    setCats(newCats);
   };
 
   const handleSubmit = async (e) => {
@@ -41,6 +40,7 @@ export default function Write() {
       username: user.username,
       title,
       desc,
+      categories: cats,
     };
     if (file) {
       const data = new FormData();
@@ -78,18 +78,27 @@ export default function Write() {
           className="writeInput"
           onChange={(e) => setCat(e.target.value)}
         />
-        <button type="submit">add category</button>
+        <button className="categorySubmit" type="submit">
+          add category
+        </button>
         <div>
-          {cats.map((a, index) => {
-            return (
-              <div>
-                <p key={index}>{a}</p>
-                <button key={a} onClick={handleRemoveCat}>
-                  remove
-                </button>
-              </div>
-            );
-          })}
+          <ul className="categoriesList">
+            {cats.map((a) => {
+              return (
+                <div>
+                  <li className="categoriesListItem" key={a.key}>
+                    {a.name}
+                    <button
+                      className="categoryRemove"
+                      onClick={() => handleRemoveCat(a.name)}
+                    >
+                      remove
+                    </button>
+                  </li>
+                </div>
+              );
+            })}
+          </ul>
         </div>
       </form>
       <form className="writeForm" onSubmit={handleSubmit}>

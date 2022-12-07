@@ -60,3 +60,40 @@
     border-radius: 10px;
     font-size: 16px;
 }
+
+.categoriesList {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.categoriesListItem {
+    display: flex;
+    color: darkgray;
+    width: 50%;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.categorySubmit {
+    position: relative;
+    top: 20px;
+    right: 50px;
+    color: white;
+    background-color: teal;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.categoryRemove {
+    position: relative;
+    top: 20px;
+    right: 50px;
+    color: white;
+    background-color: lightcoral;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
