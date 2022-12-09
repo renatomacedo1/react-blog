@@ -70,29 +70,31 @@ export default function Write() {
       {file && (
         <img className="writeImg" src={URL.createObjectURL(file)} alt="" />
       )}
-      <form ref={catRef} onSubmit={addCats}>
-        <input
-          id="catInput"
-          type="text"
-          placeholder="add category"
-          className="writeInput"
-          onChange={(e) => setCat(e.target.value)}
-        />
-        <button className="categorySubmit" type="submit">
-          add category
-        </button>
-        <div>
+      <form ref={catRef} onSubmit={addCats} className="catForm">
+        <div className="catFormGroup">
+          <input
+            id="catInput"
+            type="text"
+            placeholder="add category"
+            className="catInput"
+            onChange={(e) => setCat(e.target.value)}
+          />
+          <button className="categorySubmit" type="submit">
+            Add category
+          </button>
+        </div>
+        <div className="catListGroup">
           <ul className="categoriesList">
             {cats.map((a) => {
               return (
                 <div>
-                  <li className="categoriesListItem" key={a.key}>
-                    {a.name}
+                  <li className="catList" key={a.key}>
+                    <p className="categoriesListItem">{a.name}</p>
                     <button
                       className="categoryRemove"
                       onClick={() => handleRemoveCat(a.name)}
                     >
-                      remove
+                      X
                     </button>
                   </li>
                 </div>
