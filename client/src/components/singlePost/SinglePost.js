@@ -1,7 +1,7 @@
 import "./singlePost.css";
-import img from "../../assets/s.jpeg";
+//import img from "../../assets/s.jpeg";
 import { useLocation } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Context } from "../../context/Context";
@@ -14,6 +14,9 @@ export default function SinglePost() {
   const { user } = useContext(Context);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [cat, setCat] = useState("");
+  const [cats, setCats] = useState([]);
+
   const [updateMode, setUpdateMode] = useState(false);
 
   useEffect(() => {
@@ -22,9 +25,32 @@ export default function SinglePost() {
       setPost(res.data);
       setTitle(res.data.title);
       setDesc(res.data.desc);
+      setCats(res.data.categories);
     };
     getPost();
   }, [path]);
+
+  let catRef = useRef();
+
+  useEffect(() => {
+    catRef.current?.reset();
+    console.log(cats);
+  }, [cats]);
+
+  const addCats = (e) => {
+    e.preventDefault();
+    if (cat !== "") {
+      setCats((cats) => [...cats, { name: cat }]);
+      setCat("");
+    }
+  };
+
+  const handleRemoveCat = (name) => {
+    console.log("HandleRemoveCat");
+    // TODO this functions
+    const newCats = cats.filter((item) => item.name !== name);
+    setCats(newCats);
+  };
 
   const handleDelete = async () => {
     try {
@@ -56,6 +82,54 @@ export default function SinglePost() {
         {post.photo && (
           <img className="singlePostImg" src={PF + post.photo} alt="" />
         )}
+        {updateMode ? (
+          <form ref={catRef} onSubmit={addCats} className="catForm">
+            <div className="catFormGroup">
+              <input
+                id="catInput"
+                type="text"
+                placeholder="add category"
+                className="catInput"
+                onChange={(e) => setCat(e.target.value)}
+              />
+              <button className="categorySubmit" type="submit">
+                Add category
+              </button>
+            </div>
+            <div className="catListGroup">
+              <ul className="categoriesList">
+                {cats.map((a) => {
+                  return (
+                    <div>
+                      <li className="catList" key={a.key}>
+                        <p className="categoriesListItem">{a.name}</p>
+                        <button
+                          className="categoryRemove"
+                          onClick={() => handleRemoveCat(a.name)}
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    </div>
+                  );
+                })}
+              </ul>
+            </div>
+          </form>
+        ) : post.categories ? (
+          <div className="postCats">
+            {post.categories.map((c, index) => {
+              return (
+                <span className="postCat" key={index}>
+                  {c.name}
+                </span>
+              );
+            })}
+          </div>
+        ) : (
+          <div></div>
+        )}
+
         {updateMode ? (
           <input
             type="text"
