@@ -22,7 +22,7 @@ export default function Write() {
   const addCats = (e) => {
     e.preventDefault();
     if (cat !== "") {
-      setCats((cats) => [...cats, { key: cats.length, name: cat }]);
+      setCats((cats) => [...cats, { name: cat }]);
       setCat("");
     }
   };
@@ -94,7 +94,7 @@ export default function Write() {
                       className="categoryRemove"
                       onClick={() => handleRemoveCat(a.name)}
                     >
-                      X
+                      Remove
                     </button>
                   </li>
                 </div>

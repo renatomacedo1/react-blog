@@ -76,7 +76,7 @@
     font-size: 20px;
     border: none;
     padding: 20px;
-    width: 70vw;
+    outline: none;
 }
 
 .categoriesList {
@@ -98,9 +98,9 @@
 .categorySubmit {
     position: absolute;
     top: 20px;
-    right: 50px;
-    color: white;
-    background-color: teal;
+    right:50px;
+    color: black;
+    background-color: aquamarine;
     padding: 10px;
     border: none;
     border-radius: 10px;
