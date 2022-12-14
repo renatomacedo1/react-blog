@@ -15,6 +15,7 @@ export default function SinglePost() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [cat, setCat] = useState("");
+  const [existingCats, setExistingCats] = useState([]);
   const [cats, setCats] = useState([]);
 
   const [updateMode, setUpdateMode] = useState(false);
@@ -28,6 +29,12 @@ export default function SinglePost() {
       setCats(res.data.categories);
     };
     getPost();
+    const getExistingCats = async () => {
+      const res = await axios.get("/categories/");
+      console.log(res);
+      //      setExistingCats((existingCats)=>[...existingCats, ]);
+    };
+    getExistingCats();
   }, [path]);
 
   let catRef = useRef();
@@ -35,6 +42,7 @@ export default function SinglePost() {
   useEffect(() => {
     catRef.current?.reset();
     console.log(cats);
+    //console.log(existingCats);
   }, [cats]);
 
   const addCats = (e) => {
