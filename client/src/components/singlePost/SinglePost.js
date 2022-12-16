@@ -20,36 +20,6 @@ export default function SinglePost() {
 
   const [updateMode, setUpdateMode] = useState(false);
 
-  function unique(arr1, arr2, uniqueArr) {
-    const newArr2 = [];
-    arr2.forEach((element) => {
-      newArr2.push(element.name);
-    });
-    //console.log("arr1" + arr1);
-    //console.log("arr2" + arr2);
-    for (var i = 0; i < arr1.length; i++) {
-      //console.log(arr1[i]);
-      let flag = 0;
-      for (var j = 0; j < newArr2.length; j++) {
-        //console.log(arr2[i].name);
-        if (arr1[i].name === newArr2[j].name) {
-          newArr2.splice(j, 1);
-          j--;
-          flag = 1;
-        }
-      }
-
-      if (flag === 0) {
-        uniqueArr.push(arr1[i].name);
-      }
-    }
-    //uniqueArr.push(newArr2);
-    newArr2.forEach((element) => {
-      uniqueArr.push(element);
-    });
-    return uniqueArr;
-  }
-
   useEffect(() => {
     const getPost = async () => {
       const res = await axios.get("/posts/" + path);
@@ -104,11 +74,61 @@ export default function SinglePost() {
 
   const handleUpdate = async () => {
     // handles categories
-    const uniqueArr = [];
+    // const duplicates =[]
+    // const uniqueArr = cats.filter(checkUnique)
 
-    unique(cats, existingCats, uniqueArr);
-    console.log("uniqueArr:");
-    console.log(uniqueArr);
+    // function checkUnique(){
+    //   existingCats.forEach(existingCat=>{
+    //     cats.forEach((cat)=>{
+    //       if(cat === existingCat){
+    //         duplicates.push(cat.name)
+    //       }
+    //     })
+    //   })
+    // }
+    let cats2 = cats;
+
+    function test(array1, array2) {
+      for (var i = array1.length - 1; i >= 0; i--) {
+        for (var j = 0; j < array2.length; j++) {
+          if (array1[i].name === array2[j].name) {
+            array1.splice(i, 1);
+          }
+        }
+      }
+      console.log(array1);
+      return array1;
+    }
+
+    cats2 = test(cats, existingCats);
+
+    console.log("cats2:");
+    console.log(cats2);
+
+    try {
+      cats2.forEach(async (cat2) => {
+        var data = JSON.stringify(cat2);
+
+        var config = {
+          method: "post",
+          url: "/categories/",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data));
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      });
+    } catch (error) {
+      console.log("Ocorreu um erro ao postar a categoria");
+    }
 
     try {
       await axios.patch(`/posts/${post._id}`, {

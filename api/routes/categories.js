@@ -3,6 +3,7 @@ const Category = require("../models/Category");
 
 router.post("/", async (req, res) => {
   const newCat = new Category(req.body);
+  console.log("newCat" + newCat);
   try {
     const savedCat = await newCat.save();
     res.status(200).json(savedCat);
