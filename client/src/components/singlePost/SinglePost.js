@@ -17,6 +17,7 @@ export default function SinglePost() {
   const [cat, setCat] = useState("");
   const [existingCats, setExistingCats] = useState([]);
   const [cats, setCats] = useState([]);
+  const [cats2, setCats2] = useState([]);
 
   const [updateMode, setUpdateMode] = useState(false);
 
@@ -27,6 +28,7 @@ export default function SinglePost() {
       setTitle(res.data.title);
       setDesc(res.data.desc);
       setCats(res.data.categories);
+      setCats2(res.data.categories);
     };
     getPost();
     const getExistingCats = async () => {
@@ -40,7 +42,8 @@ export default function SinglePost() {
 
   useEffect(() => {
     catRef.current?.reset();
-    //console.log(cats);
+    console.log("Cats no início:");
+    console.log(cats);
     //console.log(existingCats);
     //console.log(existingCats);
   }, [cats]);
@@ -50,6 +53,8 @@ export default function SinglePost() {
     if (cat !== "") {
       cat.toLowerCase();
       setCats((cats) => [...cats, { name: cat }]);
+      console.log("cats no addCats:");
+      console.log(cats);
       setCat("");
     }
   };
@@ -73,21 +78,6 @@ export default function SinglePost() {
   };
 
   const handleUpdate = async () => {
-    // handles categories
-    // const duplicates =[]
-    // const uniqueArr = cats.filter(checkUnique)
-
-    // function checkUnique(){
-    //   existingCats.forEach(existingCat=>{
-    //     cats.forEach((cat)=>{
-    //       if(cat === existingCat){
-    //         duplicates.push(cat.name)
-    //       }
-    //     })
-    //   })
-    // }
-    let cats2 = cats;
-
     function test(array1, array2) {
       for (var i = array1.length - 1; i >= 0; i--) {
         for (var j = 0; j < array2.length; j++) {
@@ -100,47 +90,53 @@ export default function SinglePost() {
       return array1;
     }
 
-    cats2 = test(cats, existingCats);
+    setCats2(test(cats2, existingCats));
 
-    console.log("cats2:");
+    console.log("cats2 - handleUpdate:");
     console.log(cats2);
 
     try {
-      cats2.forEach(async (cat2) => {
-        var data = JSON.stringify(cat2);
+      console.log("entrou no patch. Cats:");
+      console.log(cats);
+      console.log("entrou no patch. Cats2:");
+      console.log(cats2);
+      await axios
+        .patch(`/posts/${post._id}`, {
+          username: user.username,
+          title,
+          desc,
+          categories: cats,
+        })
+        .then(
+          cats2.forEach(async (cat2) => {
+            var data = JSON.stringify(cat2);
 
-        var config = {
-          method: "post",
-          url: "/categories/",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: data,
-        };
+            var config = {
+              method: "post",
+              url: "/categories/",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              data: data,
+            };
 
-        await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data));
+            await axios(config)
+              .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                setUpdateMode(false);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
           })
-          .catch(function (error) {
-            console.log(error);
-          });
-      });
+        );
     } catch (error) {
-      console.log("Ocorreu um erro ao postar a categoria");
+      console.log(error);
     }
 
     try {
-      await axios.patch(`/posts/${post._id}`, {
-        username: user.username,
-        title,
-        desc,
-        cats,
-      });
-
-      setUpdateMode(false);
     } catch (error) {
-      console.log(error);
+      console.log("Ocorreu um erro ao postar a categoria");
     }
   };
 
@@ -164,12 +160,13 @@ export default function SinglePost() {
                 Add category
               </button>
             </div>
+
             <div className="catListGroup">
               <ul className="categoriesList">
                 {cats.map((a) => {
                   return (
-                    <div>
-                      <li className="catList" key={a.key}>
+                    <div key={a.name}>
+                      <li className="catList" key={a.name}>
                         <p className="categoriesListItem">{a.name}</p>
                         <button
                           className="categoryRemove"
