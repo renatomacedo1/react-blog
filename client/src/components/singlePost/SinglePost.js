@@ -20,6 +20,36 @@ export default function SinglePost() {
 
   const [updateMode, setUpdateMode] = useState(false);
 
+  function unique(arr1, arr2, uniqueArr) {
+    const newArr2 = [];
+    arr2.forEach((element) => {
+      newArr2.push(element.name);
+    });
+    //console.log("arr1" + arr1);
+    //console.log("arr2" + arr2);
+    for (var i = 0; i < arr1.length; i++) {
+      //console.log(arr1[i]);
+      let flag = 0;
+      for (var j = 0; j < newArr2.length; j++) {
+        //console.log(arr2[i].name);
+        if (arr1[i].name === newArr2[j].name) {
+          newArr2.splice(j, 1);
+          j--;
+          flag = 1;
+        }
+      }
+
+      if (flag === 0) {
+        uniqueArr.push(arr1[i].name);
+      }
+    }
+    //uniqueArr.push(newArr2);
+    newArr2.forEach((element) => {
+      uniqueArr.push(element);
+    });
+    return uniqueArr;
+  }
+
   useEffect(() => {
     const getPost = async () => {
       const res = await axios.get("/posts/" + path);
@@ -31,8 +61,7 @@ export default function SinglePost() {
     getPost();
     const getExistingCats = async () => {
       const res = await axios.get("/categories/");
-      console.log(res);
-      //      setExistingCats((existingCats)=>[...existingCats, ]);
+      setExistingCats(res.data);
     };
     getExistingCats();
   }, [path]);
@@ -41,13 +70,15 @@ export default function SinglePost() {
 
   useEffect(() => {
     catRef.current?.reset();
-    console.log(cats);
+    //console.log(cats);
+    //console.log(existingCats);
     //console.log(existingCats);
   }, [cats]);
 
   const addCats = (e) => {
     e.preventDefault();
     if (cat !== "") {
+      cat.toLowerCase();
       setCats((cats) => [...cats, { name: cat }]);
       setCat("");
     }
@@ -72,12 +103,21 @@ export default function SinglePost() {
   };
 
   const handleUpdate = async () => {
+    // handles categories
+    const uniqueArr = [];
+
+    unique(cats, existingCats, uniqueArr);
+    console.log("uniqueArr:");
+    console.log(uniqueArr);
+
     try {
       await axios.patch(`/posts/${post._id}`, {
         username: user.username,
         title,
         desc,
+        cats,
       });
+
       setUpdateMode(false);
     } catch (error) {
       console.log(error);
