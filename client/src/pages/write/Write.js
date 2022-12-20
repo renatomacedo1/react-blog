@@ -9,10 +9,20 @@ export default function Write() {
   const [desc, setDesc] = useState("");
   const [cat, setCat] = useState("");
   const [cats, setCats] = useState([]);
+  const [cats2, setCats2] = useState([]);
+  const [existingCats, setExistingCats] = useState([]);
   const [file, setFile] = useState(null);
   const { user } = useContext(Context);
 
   let catRef = useRef();
+
+  useEffect(() => {
+    const getExistingCats = async () => {
+      const res = await axios.get("/categories/");
+      setExistingCats(res.data);
+    };
+    getExistingCats();
+  });
 
   useEffect(() => {
     catRef.current?.reset();
@@ -22,6 +32,7 @@ export default function Write() {
   const addCats = (e) => {
     e.preventDefault();
     if (cat !== "") {
+      cat.toLowerCase();
       setCats((cats) => [...cats, { name: cat }]);
       setCat("");
     }
@@ -34,8 +45,33 @@ export default function Write() {
     setCats(newCats);
   };
 
+  function test(array1, array2) {
+    console.log("Entrou no test");
+    for (var i = array1.length - 1; i >= 0; i--) {
+      for (var j = 0; j < array2.length; j++) {
+        if (array1[i].name === array2[j].name) {
+          array1.splice(i, 1);
+        }
+      }
+    }
+    console.log(array1);
+    return array1;
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const derp = test(cats2, existingCats);
+
+    console.log("###  DEBUG ###");
+    console.log("cats:");
+    console.log(cats);
+    console.log("eXisitingcats");
+    console.log(existingCats);
+    console.log("cats 2 deveria ser (derp):");
+    console.log(derp);
+    console.log("###  FIM DEBUG ###");
+    //    setCats2(test(cats2, existingCats));
+
     const newPost = {
       username: user.username,
       title,
@@ -49,7 +85,28 @@ export default function Write() {
       data.append("file", file);
       newPost.photo = filename;
       try {
-        await axios.post("/upload", data);
+        await axios.post("/upload", data).then(
+          cats2.forEach(async (cat2) => {
+            var data = JSON.stringify(cat2);
+
+            var config = {
+              method: "post",
+              url: "/categories/",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              data: data,
+            };
+
+            await axios(config)
+              .then(function (response) {
+                console.log(JSON.stringify(response.data));
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          })
+        );
       } catch (error) {
         // TODO mostrar mensagem de erro ao user
         console.log("There was an error uploading the file");
@@ -87,7 +144,7 @@ export default function Write() {
           <ul className="categoriesList">
             {cats.map((a) => {
               return (
-                <div>
+                <div key={a.name}>
                   <li className="catList" key={a.key}>
                     <p className="categoriesListItem">{a.name}</p>
                     <button

@@ -42,19 +42,46 @@ export default function SinglePost() {
 
   useEffect(() => {
     catRef.current?.reset();
-    console.log("Cats no início:");
-    console.log(cats);
-    //console.log(existingCats);
-    //console.log(existingCats);
-  }, [cats]);
+
+    const catsClone = cats;
+
+    function test(array1, array2) {
+      console.log("Entrou em test");
+      console.log("cats:");
+      console.log(array1);
+      console.log("exisitng");
+      console.log(existingCats);
+
+      for (var i = array1.length - 1; i >= 0; i--) {
+        for (var j = 0; j < array2.length; j++) {
+          try {
+            if (array1[i] === array2[j].name) {
+              array1.splice(i, 1);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      console.log("Array devolvido por test:");
+      console.log(array1);
+      return array1;
+    }
+
+    setCats2(test(cats, existingCats));
+
+    // console.log("Cats no início:");
+    // console.log(cats);
+    // console.log("CatsClone:");
+    // console.log(catsClone);
+    // console.log("cats2");
+    // console.log(cats2);
+  }, [cats, cats2]);
 
   const addCats = (e) => {
     e.preventDefault();
     if (cat !== "") {
-      cat.toLowerCase();
-      setCats((cats) => [...cats, { name: cat }]);
-      console.log("cats no addCats:");
-      console.log(cats);
+      setCats((cats) => [...cats, { name: cat.toLowerCase() }]);
       setCat("");
     }
   };
@@ -78,63 +105,47 @@ export default function SinglePost() {
   };
 
   const handleUpdate = async () => {
-    function test(array1, array2) {
-      for (var i = array1.length - 1; i >= 0; i--) {
-        for (var j = 0; j < array2.length; j++) {
-          if (array1[i].name === array2[j].name) {
-            array1.splice(i, 1);
-          }
-        }
-      }
-      console.log(array1);
-      return array1;
-    }
-
-    setCats2(test(cats2, existingCats));
-
-    console.log("cats2 - handleUpdate:");
-    console.log(cats2);
-
     try {
-      console.log("entrou no patch. Cats:");
+      console.log("entrou no patch");
+      console.log("Cats:");
       console.log(cats);
-      console.log("entrou no patch. Cats2:");
-      console.log(cats2);
-      await axios
-        .patch(`/posts/${post._id}`, {
-          username: user.username,
-          title,
-          desc,
-          categories: cats,
-        })
-        .then(
-          cats2.forEach(async (cat2) => {
-            var data = JSON.stringify(cat2);
-
-            var config = {
-              method: "post",
-              url: "/categories/",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              data: data,
-            };
-
-            await axios(config)
-              .then(function (response) {
-                console.log(JSON.stringify(response.data));
-                setUpdateMode(false);
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-          })
-        );
+      await axios.patch(`/posts/${post._id}`, {
+        username: user.username,
+        title,
+        desc,
+        categories: cats,
+      });
     } catch (error) {
       console.log(error);
     }
 
     try {
+      console.log("entrou no post");
+      console.log("Cats:");
+      console.log(cats);
+      console.log("Cats2:");
+      console.log(cats2);
+      cats2.forEach(async (cat2) => {
+        var data = JSON.stringify(cat2);
+
+        var config = {
+          method: "post",
+          url: "/categories/",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data));
+            setUpdateMode(false);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      });
     } catch (error) {
       console.log("Ocorreu um erro ao postar a categoria");
     }
