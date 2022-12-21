@@ -14,10 +14,12 @@ export default function SinglePost() {
   const { user } = useContext(Context);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+
   const [cat, setCat] = useState("");
+
   const [existingCats, setExistingCats] = useState([]);
   const [cats, setCats] = useState([]);
-  const [cats2, setCats2] = useState([]);
+  const [filteredCats, setFilteredCats] = useState([]);
 
   const [updateMode, setUpdateMode] = useState(false);
 
@@ -27,12 +29,14 @@ export default function SinglePost() {
       setPost(res.data);
       setTitle(res.data.title);
       setDesc(res.data.desc);
+
       setCats(res.data.categories);
-      setCats2(res.data.categories);
+      //setExistingCats(res.data.categories);
     };
     getPost();
     const getExistingCats = async () => {
       const res = await axios.get("/categories/");
+
       setExistingCats(res.data);
     };
     getExistingCats();
@@ -42,41 +46,7 @@ export default function SinglePost() {
 
   useEffect(() => {
     catRef.current?.reset();
-
-    const catsClone = cats;
-
-    function test(array1, array2) {
-      console.log("Entrou em test");
-      console.log("cats:");
-      console.log(array1);
-      console.log("exisitng");
-      console.log(existingCats);
-
-      for (var i = array1.length - 1; i >= 0; i--) {
-        for (var j = 0; j < array2.length; j++) {
-          try {
-            if (array1[i] === array2[j].name) {
-              array1.splice(i, 1);
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      }
-      console.log("Array devolvido por test:");
-      console.log(array1);
-      return array1;
-    }
-
-    setCats2(test(cats, existingCats));
-
-    // console.log("Cats no início:");
-    // console.log(cats);
-    // console.log("CatsClone:");
-    // console.log(catsClone);
-    // console.log("cats2");
-    // console.log(cats2);
-  }, [cats, cats2]);
+  }, [cats]);
 
   const addCats = (e) => {
     e.preventDefault();
@@ -105,6 +75,14 @@ export default function SinglePost() {
   };
 
   const handleUpdate = async () => {
+    // Not working right now -> catsClone is empty
+
+    setFilteredCats(
+      cats.filter((item) => {
+        return !existingCats.includes(item);
+      })
+    );
+
     try {
       console.log("entrou no patch");
       console.log("Cats:");
@@ -123,10 +101,11 @@ export default function SinglePost() {
       console.log("entrou no post");
       console.log("Cats:");
       console.log(cats);
-      console.log("Cats2:");
-      console.log(cats2);
-      cats2.forEach(async (cat2) => {
-        var data = JSON.stringify(cat2);
+      // #TODO não está a receber o filteredCats
+      console.log("FilteredCats:");
+      console.log(filteredCats);
+      filteredCats.forEach(async (item) => {
+        var data = JSON.stringify(item);
 
         var config = {
           method: "post",
