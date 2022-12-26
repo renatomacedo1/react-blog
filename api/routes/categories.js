@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { response } = require("express");
 const Category = require("../models/Category");
 
 router.post("/", async (req, res) => {
@@ -9,6 +10,23 @@ router.post("/", async (req, res) => {
     res.status(200).json(savedCat);
   } catch (error) {
     console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//Insert many
+router.post("/many/", async (req, res) => {
+  const array = req.body.array;
+
+  try {
+    Category.insertMany(array)
+      .then(function (docs) {
+        response.json(docs);
+      })
+      .catch(function (err) {
+        response.status(500).send(err);
+      });
+  } catch (error) {
     res.status(500).json(error);
   }
 });

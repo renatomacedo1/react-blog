@@ -33,6 +33,7 @@ export default function SinglePost() {
       setCats(res.data.categories);
       //setExistingCats(res.data.categories);
     };
+
     getPost();
     const getExistingCats = async () => {
       const res = await axios.get("/categories/");
@@ -42,6 +43,14 @@ export default function SinglePost() {
     getExistingCats();
   }, [path]);
 
+  useEffect(() => {
+    const tempArray = cats.filter((item) => {
+      return !existingCats.includes(item);
+    });
+
+    setFilteredCats(tempArray);
+  }, [cats]);
+
   let catRef = useRef();
 
   useEffect(() => {
@@ -50,7 +59,14 @@ export default function SinglePost() {
 
   const addCats = (e) => {
     e.preventDefault();
-    if (cat !== "") {
+
+    const temp = cats.filter((item) => item.name !== cat);
+
+    if (temp !== []) {
+      alert("This post already has that category");
+    }
+
+    if (cat !== "" && temp === []) {
       setCats((cats) => [...cats, { name: cat.toLowerCase() }]);
       setCat("");
     }
@@ -77,22 +93,22 @@ export default function SinglePost() {
   const handleUpdate = async () => {
     // Not working right now -> catsClone is empty
 
-    setFilteredCats(
-      cats.filter((item) => {
-        return !existingCats.includes(item);
-      })
-    );
-
     try {
       console.log("entrou no patch");
       console.log("Cats:");
       console.log(cats);
-      await axios.patch(`/posts/${post._id}`, {
-        username: user.username,
-        title,
-        desc,
-        categories: cats,
-      });
+      await axios
+        .patch(`/posts/${post._id}`, {
+          username: user.username,
+          title,
+          desc,
+          categories: cats,
+        })
+        .then(
+          axios.post(`/posts/many`, {
+            array: filteredCats,
+          })
+        );
     } catch (error) {
       console.log(error);
     }
